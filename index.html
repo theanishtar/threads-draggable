@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draggable Image</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <style>
+    body,
+    html {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #draggable,
+    #clone {
+      width: 400px;
+      position: absolute;
+      cursor: move;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #clone {
+      z-index: 1;
+    }
+
+    #draggable {
+      z-index: 999;
+    }
+  </style>
+</head>
+
+<body>
+
+  <img id="draggable" src="./images/20.png" alt="Draggable Image">
+  <img id="clone" src="./images/20.png" alt="Draggable Image">
+
+  <script>
+    $(document).ready(function () {
+      centerImage();
+
+      var dragging = false;
+      var offsetX, offsetY;
+
+      var image = $("#draggable");
+      var windowWidth = $(window).width();
+      var imageWidth = image.width();
+
+
+      $("#draggable").on("mousedown touchstart", function (e) {
+        dragging = true;
+        var event = (e.type == 'mousedown') ? e : e.originalEvent.touches[0];
+        offsetX = event.clientX - parseInt($("#draggable").css("left"));
+        offsetY = event.clientY - parseInt($("#draggable").css("top"));
+        moveImageClone();
+      });
+
+      $(document).on("mousemove touchmove", function (e) {
+        if (dragging) {
+          var event = (e.type == 'mousemove') ? e : e.originalEvent.touches[0];
+          var newX = event.clientX - offsetX;
+          var newY = event.clientY - offsetY;
+
+          $("#draggable").css("left", newX + "px");
+          $("#draggable").css("top", newY + "px");
+
+          moveImageClone();
+        }
+      });
+
+      $(document).on("mouseup touchend", function () {
+        dragging = false;
+      });
+
+
+    });
+
+    function getCoordinates() {
+      var draggable = $("#draggable");
+      var x = draggable.position().left;
+      var y = draggable.position().top;
+      console.log("X: " + x + ", Y: " + y);
+      alert("X: " + x + ", Y: " + y);
+    }
+
+    function moveImageToCoordinates(id, x, y) {
+      if (id === 'draggable') {
+        var draggable = $("#draggable");
+        draggable.css("left", x + "px");
+        draggable.css("top", y + "px");
+      } else {
+        var clone = $("#clone");
+        clone.css("left", x + "px");
+        clone.css("top", y + "px");
+      }
+
+    }
+
+    function moveImageClone() {
+      var draggable = $("#draggable");
+      var clone = $("#clone");
+      var x = draggable.position().left;
+      var y = draggable.position().top;
+      clone.css("left", x + "px");
+      clone.css("top", y + "px");
+    }
+
+    function thread() {
+      var draggable = $("#draggable");
+      var x = draggable.position().left;
+      var y = draggable.position().top;
+
+      if (x < 0) {
+        // alert("ok")
+        // draggable.css("right", x + "px");
+        // moveImageToCoordinates('draggable', x * -1 + ($(window).width() / 2) - x * 2, y)
+        moveImageToCoordinates('clone', x * -1 + ($(window).width() / 2) - x * 2, y)
+      }
+
+      console.log(x)
+    }
+
+    function centerImage() {
+      var windowWidth = $(window).width();
+      var windowHeight = $(window).height();
+
+      var imageWidth = $("#draggable").width();
+      var imageHeight = $("#draggable").height();
+
+      var leftPosition = (windowWidth - imageWidth) / 2;
+      var topPosition = (windowHeight - imageHeight) / 2;
+
+      $("#draggable").css("left", leftPosition + "px");
+      $("#draggable").css("top", topPosition + "px");
+
+      $("#clone").css("left", leftPosition + "px");
+      $("#clone").css("top", topPosition + "px");
+    }
+    const intervalId = setInterval(thread, 1000);
+
+
+  </script>
+
+  <button onclick="getCoordinates()">Get Coordinates</button>
+
+</body>
+
+</html>

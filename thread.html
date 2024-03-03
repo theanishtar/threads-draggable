@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draggable Image</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #draggable {
+      position: absolute;
+      cursor: move;
+    }
+  </style>
+</head>
+
+<body>
+
+  <img id="draggable" src="https://avatars.githubusercontent.com/u/89396036?v=4" alt="Draggable Image">
+
+  <script>
+    let dragging = false;
+    let offsetX, offsetY;
+
+    document.getElementById("draggable").addEventListener("mousedown", function (e) {
+      dragging = true;
+      offsetX = e.clientX - parseInt(document.getElementById("draggable").style.left);
+      offsetY = e.clientY - parseInt(document.getElementById("draggable").style.top);
+    });
+
+    document.addEventListener("mousemove", function (e) {
+      if (dragging) {
+        let newX = e.clientX - offsetX;
+        let newY = e.clientY - offsetY;
+
+        document.getElementById("draggable").style.left = newX + "px";
+        document.getElementById("draggable").style.top = newY + "px";
+      }
+    });
+
+    document.addEventListener("mouseup", function () {
+      dragging = false;
+    });
+
+    document.addEventListener("mouseleave", function () {
+      dragging = false;
+    });
+
+    document.addEventListener("mouseover", function (e) {
+      if (dragging && e.target.tagName === "IMG") {
+        e.target.parentNode.removeChild(e.target);
+        document.body.appendChild(e.target);
+      }
+    });
+
+    function getCoordinates() {
+      let draggable = document.getElementById("draggable");
+      let x = parseInt(draggable.style.left);
+      let y = parseInt(draggable.style.top);
+      console.log("X: " + x + ", Y: " + y);
+      alert("X: " + x + ", Y: " + y);
+    }
+  </script>
+
+  <button onclick="getCoordinates()">Get Coordinates</button>
+
+</body>
+
+</html>
